@@ -42,7 +42,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = "E:\CLion 2023.2.2\bin\cmake\win\x64\bin\cmake.exe" --regenerate-during-build -SE:\my_tetris -BE:\my_tetris\cmake-build-debug
+  command = "E:\CLion 2023.2.2\bin\cmake\win\x64\bin\cmake.exe" --regenerate-during-build -SE:\Console-Tetris -BE:\Console-Tetris\cmake-build-debug
   description = Re-running CMake...
   generator = 1
 

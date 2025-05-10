@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "e:/my_tetris/cmake-build-debug"
+			"value" : "e:/Console-Tetris/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -431,7 +431,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "E:/my_tetris/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "E:/Console-Tetris/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -503,7 +503,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "E:/my_tetris"
+			"value" : "E:/Console-Tetris"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1147,7 +1147,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "E:/my_tetris/cmake-build-debug"
+			"value" : "E:/Console-Tetris/cmake-build-debug"
 		},
 		{
 			"name" : "my_tetris_IS_TOP_LEVEL",
@@ -1171,7 +1171,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "E:/my_tetris"
+			"value" : "E:/Console-Tetris"
 		}
 	],
 	"kind" : "cache",

@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "E:/my_tetris/cmake-build-debug",
-		"source" : "E:/my_tetris"
+		"build" : "E:/Console-Tetris/cmake-build-debug",
+		"source" : "E:/Console-Tetris"
 	},
 	"version" : 
 	{

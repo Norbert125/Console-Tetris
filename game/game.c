@@ -230,7 +230,8 @@ void gameLoop(int board[20][10], int *score) {
             gameOver = 1;
         }
         /// Falling speed
-        int speed = 300 - level * 50;
+        int speed = 250 - level * 50;
+        if (level > 10) {speed = 1;}
         if (speed < 100) speed = 100;
         Sleep(speed);
     }

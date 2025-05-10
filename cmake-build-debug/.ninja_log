@@ -1,17 +1,8 @@
 # ninja log v6
 3	140	7685860586506893	CMakeFiles/my_tetris.dir/main.c.obj	f58c4eab7377e31e
-754	920	7685860594020547	my_tetris.exe	8e7bd88f6e34d27c
-24	839	7685845465133653	CMakeFiles/my_tetris.dir/board/board.c.obj	e28b8f8b215dc9f1
+712	813	7685870558304710	my_tetris.exe	8e7bd88f6e34d27c
 11	754	7685860586586968	CMakeFiles/my_tetris.dir/game/game.c.obj	9ea09fb066fae720
-39	146	7685017157930732	CMakeFiles/my_tetris.dir/game/tetromino/tetromino.c.obj	684f63595b24c6f7
-18	141	7685860586657035	CMakeFiles/my_tetris.dir/saveScore/saveScore.c.obj	727a7adfb2aececf
-13	7199	7685008270745075	CMakeFiles/my_tetris.dir/tetromino/tetromino.c.obj	fda3ed6ff9647a6
-1	614	7685863779736561	build.ninja	98a05d3c99d8cf8a
+4	712	7685870551222832	CMakeFiles/my_tetris.dir/saveScore/saveScore.c.obj	727a7adfb2aececf
+1	614	7686055354022496	build.ninja	98a05d3c99d8cf8a
 1	8	7685860577172540	clean	30c4cdbb68c1e60d
 25	139	7685860586727094	CMakeFiles/my_tetris.dir/game/tetromino.c.obj	9681a17f65c3d3f6
-4	114	7685863913943440	CMakeFiles/my_tetris.dir/saveScore/saveScore.c.obj	727a7adfb2aececf
-115	236	7685863915046962	my_tetris.exe	8e7bd88f6e34d27c
-3	709	7685867439321993	CMakeFiles/my_tetris.dir/saveScore/saveScore.c.obj	727a7adfb2aececf
-710	822	7685867446387894	my_tetris.exe	8e7bd88f6e34d27c
-4	712	7685870551222832	CMakeFiles/my_tetris.dir/saveScore/saveScore.c.obj	727a7adfb2aececf
-712	813	7685870558304710	my_tetris.exe	8e7bd88f6e34d27c
