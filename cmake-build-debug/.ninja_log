@@ -6,3 +6,11 @@
 1	614	7686055354022496	build.ninja	98a05d3c99d8cf8a
 1	8	7685860577172540	clean	30c4cdbb68c1e60d
 25	139	7685860586727094	CMakeFiles/my_tetris.dir/game/tetromino.c.obj	9681a17f65c3d3f6
+617	3179	7687635268770514	CMakeFiles/my_tetris.dir/game/tetromino.c.obj	94b60d297604800e
+499	3180	7687635267584246	CMakeFiles/my_tetris.dir/main.c.obj	237c14ecf464398e
+606	4242	7687635268660415	CMakeFiles/my_tetris.dir/saveScore/saveScore.c.obj	ef6e929f03077469
+576	4257	7687635268360137	CMakeFiles/my_tetris.dir/game/game.c.obj	21b6e6f304354416
+4257	5401	7687635305159451	my_tetris.exe	8e7bd88f6e34d27c
+12	131	7687636091555061	CMakeFiles/my_tetris.dir/game/tetromino.c.obj	94b60d297604800e
+4	772	7687636091474996	CMakeFiles/my_tetris.dir/game/game.c.obj	21b6e6f304354416
+772	1058	7687636099160689	my_tetris.exe	8e7bd88f6e34d27c
