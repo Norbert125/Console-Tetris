@@ -232,7 +232,7 @@ void gameLoop(int board[20][10], int *score) {
         /// Falling speed
         int speed = 250 - level * 50;
         if (level > 10) {speed = 1;}
-        if (speed < 100) speed = 100;
+        else if (speed < 100) speed = 100;
         Sleep(speed);
     }
     system("cls");
