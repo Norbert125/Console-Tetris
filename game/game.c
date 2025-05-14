@@ -138,6 +138,7 @@ void gameLoop(int board[20][10], int *score) {
         if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
             if (canMoveDown(board, x, y, currentShape)) {
                 y++;
+                score += 10;
             }
         }
         static int zPressed = 0;
