@@ -14,3 +14,5 @@
 12	131	7687636091555061	CMakeFiles/my_tetris.dir/game/tetromino.c.obj	94b60d297604800e
 4	772	7687636091474996	CMakeFiles/my_tetris.dir/game/game.c.obj	21b6e6f304354416
 772	1058	7687636099160689	my_tetris.exe	8e7bd88f6e34d27c
+4	1332	7689148993505284	CMakeFiles/my_tetris.dir/game/game.c.obj	21b6e6f304354416
+1332	2371	7689149006797812	my_tetris.exe	8e7bd88f6e34d27c
