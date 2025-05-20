@@ -1,9 +1,9 @@
 #include "game.h"
-#include <time.h>
+#include "tetromino.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <windows.h>
-#include "tetromino.h"
 
 void setColor(int level) {
     int color = 7;
@@ -35,8 +35,40 @@ void setColor(int level) {
     SetConsoleTextAttribute(hConsole, color);
 }
 
+int bagIndex;
+int bag[NUM_SHAPES];
+
+void shuffleBag(int *bag) {
+    for (int i = 0; i < NUM_SHAPES; ++i) {
+        bag[i] = i;
+    }
+    for (int i = NUM_SHAPES - 1; i > 0; --i) {
+        int j = rand() % (i + 1);
+        int temp = bag[i];
+        bag[i] = bag[j];
+        bag[j] = temp;
+    }
+    bagIndex = 0;
+}
+
+int getNextPiece(int *bag, int *bagIndex, int useBagSystem) {
+    if (useBagSystem) {
+        if (*bagIndex >= NUM_SHAPES) {
+            shuffleBag(bag);
+        }
+        return bag[(*bagIndex)++];
+    } else {
+        return rand() % NUM_SHAPES;
+    }
+}
+
+
 void gameLoop(int board[20][10], int *score) {
-    srand(time(NULL));
+    srand(time(nullptr));
+    int useBagSys = 0; /// bag system usage
+    printf("Enable bag system? (by enabling it bag system provides the fact that don't get duplicates, allways separate pieces) (y/n): ");
+    char input = getchar();
+    if (input == 'y' || input == 'Y') {useBagSys = 1;}
     int gameOver = 0;
     int linesClear = 0;
     int level = 1;
@@ -46,10 +78,12 @@ void gameLoop(int board[20][10], int *score) {
     int nextShape = rand() % NUM_SHAPES;
     int currentPiece = nextShape;
     memcpy(currentShape, tetrominos[nextShape], sizeof(tetrominos[0]));
-    nextShape = rand() % NUM_SHAPES;
+    nextShape = getNextPiece(bag,&bagIndex,useBagSys);
     while (!gameOver) {
         /// clear console
         system("cls");
+
+        if (useBagSys){shuffleBag(bag);} // shuffle bag pieces
 
         int displayBoard[20][10];
 
@@ -87,6 +121,8 @@ void gameLoop(int board[20][10], int *score) {
         setColor(7);
 
         printf("-------------------\n"); /// separator!
+
+        printf("Lines Cleared: %d\n",linesClear); /// line clear counter display
 
         printf("Score: %d\n", *score); /// printing score
 
@@ -149,6 +185,17 @@ void gameLoop(int board[20][10], int *score) {
             rotateCounterClockwise(currentShape, rotatedShape);
             if (canRotate(board, x, y, rotatedShape)) {
                 memcpy(currentShape, rotatedShape, sizeof(rotatedShape));
+            } else {
+                int kick = 0;
+                for (int dx = -1; dx <= 1; dx++) {
+                    if (canRotate(board,x+dx,y,rotatedShape)) {
+                        x += dx;
+                        memcpy(currentShape,rotatedShape,sizeof(rotatedShape));
+                        kick = 1;
+                        break;
+                    }
+                }
+                if (!kick){;}
             }
             zPressed = 1;
         }
@@ -160,6 +207,17 @@ void gameLoop(int board[20][10], int *score) {
             rotateClockwise(currentShape, rotatedShape);
             if (canRotate(board, x, y, rotatedShape)) {
                 memcpy(currentShape, rotatedShape, sizeof(rotatedShape));
+            } else {
+                int kick = 0;
+                for (int dx = -1; dx <= 1; dx++) {
+                    if (canRotate(board,x+dx,y,rotatedShape)) {
+                        x += dx;
+                        memcpy(currentShape,rotatedShape,sizeof(rotatedShape));
+                        kick = 1;
+                        break;
+                    }
+                }
+                if (!kick){;}
             }
             xPressed = 1;
         }
@@ -183,6 +241,8 @@ void gameLoop(int board[20][10], int *score) {
                 }
             }
 
+            int linesClearedNow = 0;
+
             for (int row = 19; row >= 0; row--) {
                 int full = 1;
                 for (int col = 0; col < 10; col++) {
@@ -192,14 +252,8 @@ void gameLoop(int board[20][10], int *score) {
                     }
                 }
                 if (full) {
-                    (*score) += 100 * level;
-                    Beep(600, 100);
-                    linesClear++;
-                    if (linesClear % 10 == 0) {
-                        Beep(1000, 150);
-                        Beep(1200, 150);
-                        level++;
-                    }
+                    linesClearedNow++; /// present line clear counter
+
                     for (int r = row; r > 0; r--) {
                         for (int col = 0; col < 10; col++) {
                             board[r][col] = board[r - 1][col];
@@ -210,6 +264,22 @@ void gameLoop(int board[20][10], int *score) {
                     }
                     row++;  /// re-check this row
                 }
+            }
+
+            switch (linesClearedNow) {
+                case 1: *score += 100 * level; Beep(600,100);break;
+                case 2: *score += 300 * level; Beep(700,100);break;
+                case 3: *score += 500 * level; Beep(800,100);break;
+                case 4: *score += 800 * level; Beep(900,100); printf("\n>>> TETRIS!! <<<\n");Sleep(200);break;
+                default:break;
+            }
+
+            linesClear += linesClearedNow;
+
+            if (linesClear >= (level+1) *10) {
+                level++;
+                Beep(1000,150);
+                Beep(1200,150);
             }
 
             /// Spawn next piece AFTER checking for lines
