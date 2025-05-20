@@ -1,5 +1,6 @@
 #include "game.h"
 #include "tetromino.h"
+#include "../saveScore/saveScore.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -106,7 +107,7 @@ void gameLoop(int board[20][10], int *score) {
             }
         }
         setColor(level); /// setting starting level color
-        /// Drawing:
+        /// Drawing board:
         for (int row = 0; row < 20; ++row) {
             for (int col = 0; col < 10; ++col) {
                 if (displayBoard[row][col] == 1) {
