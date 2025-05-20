@@ -27,3 +27,6 @@
 3	98	7694420470638011	CMakeFiles/my_tetris.dir/main.c.obj	237c14ecf464398e
 11	730	7694420470718083	CMakeFiles/my_tetris.dir/game/game.c.obj	21b6e6f304354416
 730	831	7694420477904622	my_tetris.exe	8e7bd88f6e34d27c
+3	146	7694428483805444	CMakeFiles/my_tetris.dir/main.c.obj	237c14ecf464398e
+11	875	7694428483885123	CMakeFiles/my_tetris.dir/game/game.c.obj	21b6e6f304354416
+875	1188	7694428492522886	my_tetris.exe	8e7bd88f6e34d27c
