@@ -6,7 +6,7 @@
 #include <windows.h>
 
 void setColor(int level) {
-    int color = 7;
+    int color;
     switch (level) {
         case 1:
             color = 9;  /// Blue
@@ -66,7 +66,7 @@ int getNextPiece(int *bag, int *bagIndex, int useBagSystem) {
 void gameLoop(int board[20][10], int *score) {
     srand(time(nullptr));
     int useBagSys = 0; /// bag system usage
-    printf("Enable bag system? (by enabling it bag system provides the fact that don't get duplicates, allways separate pieces) (y/n): ");
+    printf("Enable bag system? \n(by enabling it bag system provides the fact that don't get duplicates, allways separate pieces) (y/n): ");
     char input = getchar();
     if (input == 'y' || input == 'Y') {useBagSys = 1;}
     int gameOver = 0;
@@ -174,7 +174,7 @@ void gameLoop(int board[20][10], int *score) {
         if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
             if (canMoveDown(board, x, y, currentShape)) {
                 y++;
-                *score += 10;
+                *score += 5;
             }
         }
         static int zPressed = 0;
@@ -270,7 +270,7 @@ void gameLoop(int board[20][10], int *score) {
                 case 1: *score += 100 * level; Beep(600,100);break;
                 case 2: *score += 300 * level; Beep(700,100);break;
                 case 3: *score += 500 * level; Beep(800,100);break;
-                case 4: *score += 800 * level; Beep(900,100); printf("\n>>> TETRIS!! <<<\n");Sleep(200);break;
+                case 4: *score += 800 * level; Beep(900,100); printf("\n>>> TETRIS!! <<<\n");Sleep(500);break;
                 default:break;
             }
 
@@ -302,7 +302,7 @@ void gameLoop(int board[20][10], int *score) {
         }
         /// Falling speed
         int speed = 250 - level * 50;
-        if (level > 10) {speed = 1;}
+        if (level > 10) {speed = 10;}
         else if (speed < 100) speed = 100;
         Sleep(speed);
     }
