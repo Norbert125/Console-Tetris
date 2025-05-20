@@ -35,10 +35,7 @@ void setColor(int level) {
     SetConsoleTextAttribute(hConsole, color);
 }
 
-int bagIndex;
-int bag[NUM_SHAPES];
-
-void shuffleBag(int *bag) {
+void shuffleBag(int *bag, const int *bagIndex) {
     for (int i = 0; i < NUM_SHAPES; ++i) {
         bag[i] = i;
     }
@@ -54,7 +51,7 @@ void shuffleBag(int *bag) {
 int getNextPiece(int *bag, int *bagIndex, int useBagSystem) {
     if (useBagSystem) {
         if (*bagIndex >= NUM_SHAPES) {
-            shuffleBag(bag);
+            shuffleBag(bag, bagIndex);
         }
         return bag[(*bagIndex)++];
     } else {
@@ -66,6 +63,8 @@ int getNextPiece(int *bag, int *bagIndex, int useBagSystem) {
 void gameLoop(int board[20][10], int *score) {
     srand(time(nullptr));
     int useBagSys = 0; /// bag system usage
+    int bagIndex;
+    int bag[NUM_SHAPES];
     printf("Enable bag system? \n(by enabling it bag system provides the fact that don't get duplicates, allways separate pieces) (y/n): ");
     char input = getchar();
     if (input == 'y' || input == 'Y') {useBagSys = 1;}
@@ -75,7 +74,7 @@ void gameLoop(int board[20][10], int *score) {
     int currentShape[4][4] = {0}; /// current shape
     int rotatedShape[4][4] = {0}; /// rotated shape
     int x = 3, y = 0;
-    int nextShape = rand() % NUM_SHAPES;
+    int nextShape = getNextPiece(bag,&bagIndex,useBagSys);
     int currentPiece = nextShape;
     memcpy(currentShape, tetrominos[nextShape], sizeof(tetrominos[0]));
     nextShape = getNextPiece(bag,&bagIndex,useBagSys);
@@ -83,7 +82,15 @@ void gameLoop(int board[20][10], int *score) {
         /// clear console
         system("cls");
 
-        if (useBagSys){shuffleBag(bag);} // shuffle bag pieces
+        if (useBagSys){
+            currentPiece = bag[bagIndex++];
+            if(bagIndex >= NUM_SHAPES){
+                shuffleBag(bag,&bagIndex); // shuffle bag pieces
+                bagIndex = 0;
+            }
+        } else {
+            currentPiece = rand() % NUM_SHAPES;
+        }
 
         int displayBoard[20][10];
 
