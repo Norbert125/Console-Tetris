@@ -1,6 +1,5 @@
 #include "game.h"
 #include "tetromino.h"
-#include "../saveScore/saveScore.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -310,4 +309,5 @@ void gameLoop(int board[20][10], int *score) {
     printf("Game OVER!!\n");
     printf("Final score: %i\n", *score);
     printf("Final level reached: %i\n", level);
+    Sleep(500);
 }

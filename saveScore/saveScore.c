@@ -7,7 +7,7 @@
 void saveScore(int score) {
     char option = '\0';
     int highScore = 0;
-    int newHigh = 0;
+    int newHigh;
     FILE *file = fopen(FILENAME, "r");
     if (file != NULL) {
         char label[10];
@@ -21,9 +21,9 @@ void saveScore(int score) {
 
     printf("Do you want to save your score? (Y/N): ");
 
-    while ((option = getchar()) != '\n' && option != EOF){
+    option = getchar();
 
-        printf("Do you want to save your score? (Y/N): ");
+    while (getchar() != '\n'){
 
         if (option == 'y' || option == 'Y') { /// if wanted saving score!
             if (score > highScore) {
