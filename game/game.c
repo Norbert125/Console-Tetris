@@ -310,4 +310,5 @@ void gameLoop(int board[20][10], int *score) {
     printf("Final score: %i\n", *score);
     printf("Final level reached: %i\n", level);
     Sleep(500);
+    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 }
