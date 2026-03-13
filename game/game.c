@@ -3,9 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+/// FIX: Prevent the collision between windows.h and curses.h
 #include <windows.h>
+#undef MOUSE_MOVED
 #include "game/curses.h"
 
+// Helper to map your levels to PDCurses color pairs
 int getColorPair(int level) {
     switch (level) {
         case 1: return 1; /// Blue
@@ -34,7 +38,7 @@ void shuffleBag(int *bag, int *bagIndex) {
 int getNextPiece(int *bag, int *bagIndex, int useBagSystem) {
     if (useBagSystem) {
         if (*bagIndex >= NUM_SHAPES) {
-            shuffleBag(bag,bagIndex);
+            shuffleBag(bag, bagIndex);
         }
         return bag[(*bagIndex)++];
     } else {
@@ -48,8 +52,8 @@ void gameLoop(int board[20][10], int *score) {
     int bagIndex;
     int bag[NUM_SHAPES];
 
-    /// FIX: Use Curses for the prompt so it doesn't break the terminal buffer
-    nodelay(stdscr, FALSE); /// Temporarily pause the game loop to wait for user input
+    /// Use Curses for the prompt so it doesn't break the terminal buffer
+    nodelay(stdscr, FALSE);
     mvprintw(0, 0, "Enable bag system?");
     mvprintw(1, 0, "(by enabling it bag system provides the fact that don't get duplicates, allways separate pieces) (y/n): ");
     refresh();
@@ -58,8 +62,8 @@ void gameLoop(int board[20][10], int *score) {
     if (input == 'y' || input == 'Y') { useBagSys = 1; }
     if (useBagSys){ shuffleBag(bag, &bagIndex); }
 
-    nodelay(stdscr, TRUE); /// Turn non-blocking input back on for the game
-    clear(); /// Wipe the prompt off the screen
+    nodelay(stdscr, TRUE);
+    clear();
 
     int gameOver = 0;
     int linesClear = 0;
@@ -73,19 +77,16 @@ void gameLoop(int board[20][10], int *score) {
     nextShape = getNextPiece(bag, &bagIndex, useBagSys);
 
     while (!gameOver) {
-        /// FIX: Wipe the virtual buffer clean (No flickering!)
         erase();
 
         int displayBoard[20][10];
 
-        /// display board - game board
         for (int row = 0; row < 20; row++) {
             for (int col = 0; col < 10; col++) {
                 displayBoard[row][col] = board[row][col];
             }
         }
 
-        /// render current piece
         for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 4; col++) {
                 if (currentShape[row][col] == 1) {
@@ -100,32 +101,43 @@ void gameLoop(int board[20][10], int *score) {
 
         int colorPair = getColorPair(level);
 
-        /// FIX: Drawing board entirely with Curses
+        /// --- 1. DRAW THE RETRO BORDER ---
+        attron(COLOR_PAIR(7));
+        mvprintw(0, 1, "--------------------");
+        for (int row = 0; row < 20; ++row) {
+            mvprintw(row + 1, 0, "|");
+            mvprintw(row + 1, 21, "|");
+        }
+        mvprintw(21, 1, "--------------------");
+        attroff(COLOR_PAIR(7));
+
+        /// --- 2. DRAW THE PLAYFIELD ---
         for (int row = 0; row < 20; ++row) {
             for (int col = 0; col < 10; ++col) {
                 if (displayBoard[row][col] == 1) {
                     attron(COLOR_PAIR(colorPair));
-                    mvprintw(row, col * 2, "# ");
+                    mvprintw(row + 1, (col * 2) + 1, "[]");
                     attroff(COLOR_PAIR(colorPair));
                 } else {
-                    mvprintw(row, col * 2, ". ");
+                    mvprintw(row + 1, (col * 2) + 1, "  ");
                 }
             }
         }
 
-        int ui_x = 25;
-        mvprintw(0, ui_x, "-------------------");
-        mvprintw(2, ui_x, "Lines Cleared: %d", linesClear);
-        mvprintw(4, ui_x, "Score: %d", *score);
-        mvprintw(6, ui_x, "Level: %d", level);
-        mvprintw(8, ui_x, "Next piece:");
+        /// --- 3. DRAW THE ARCADE UI ---
+        int ui_x = 26;
+        attron(COLOR_PAIR(7));
+        mvprintw(1, ui_x, "SCORE: %06d", *score);
+        mvprintw(3, ui_x, "LEVEL: %02d", level);
+        mvprintw(5, ui_x, "LINES: %03d", linesClear);
+        mvprintw(8, ui_x, "NEXT:");
+        attroff(COLOR_PAIR(7));
 
-        /// Render Next Piece with color
         attron(COLOR_PAIR(colorPair));
         for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 4; col++) {
                 if (tetrominos[nextShape][row][col]) {
-                    mvprintw(10 + row, ui_x + (col * 2), "# ");
+                    mvprintw(10 + row, ui_x + (col * 2), "[]");
                 } else {
                     mvprintw(10 + row, ui_x + (col * 2), "  ");
                 }
@@ -133,10 +145,9 @@ void gameLoop(int board[20][10], int *score) {
         }
         attroff(COLOR_PAIR(colorPair));
 
-        /// FIX: Push everything to the screen in one smooth motion
         refresh();
 
-        /// Get Input
+        /// Get Input (Still using Windows API for now)
         if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
             int canMove = 1;
             for (int row = 0; row < 4; ++row) {
@@ -168,7 +179,6 @@ void gameLoop(int board[20][10], int *score) {
             if (canMove) x++;
         }
 
-        /// push down
         if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
             if (canMoveDown(board, x, y, currentShape)) {
                 y++;
@@ -178,7 +188,6 @@ void gameLoop(int board[20][10], int *score) {
         static int zPressed = 0;
         static int xPressed = 0;
 
-        /// rotate counter clockwise
         if ((GetAsyncKeyState('Z') & 0x8000) && !zPressed) {
             rotateCounterClockwise(currentShape, rotatedShape);
             if (canRotate(board, x, y, rotatedShape)) {
@@ -199,7 +208,7 @@ void gameLoop(int board[20][10], int *score) {
         if (!(GetAsyncKeyState('Z') & 0x8000)) {
             zPressed = 0;
         }
-        /// rotate clockwise
+
         if ((GetAsyncKeyState('X') & 0x8000) && !xPressed) {
             rotateClockwise(currentShape, rotatedShape);
             if (canRotate(board, x, y, rotatedShape)) {
@@ -224,7 +233,6 @@ void gameLoop(int board[20][10], int *score) {
         if (canMoveDown(board, x, y, currentShape)) {
             y++;
         } else {
-            /// Lock piece into the board
             for (int row = 0; row < 4; ++row) {
                 for (int col = 0; col < 4; ++col) {
                     if (currentShape[row][col]) {
@@ -269,8 +277,7 @@ void gameLoop(int board[20][10], int *score) {
                 case 4:
                     *score += 800 * level;
                     Beep(900,100);
-                    /// FIX: Using mvprintw instead of printf
-                    mvprintw(21, 0, ">>> TETRIS!! <<<");
+                    mvprintw(23, 0, ">>> TETRIS!! <<<");
                     refresh();
                     Sleep(500);
                     break;
@@ -307,7 +314,6 @@ void gameLoop(int board[20][10], int *score) {
         Sleep(speed);
     }
 
-    /// FIX: Use Curses for the game over screen
     clear();
     mvprintw(0, 0, "Game OVER!!");
     mvprintw(1, 0, "Final score: %i", *score);
