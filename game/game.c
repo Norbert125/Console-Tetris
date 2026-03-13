@@ -110,36 +110,45 @@ void gameLoop(int board[20][10], int *score) {
             }
         }
         setColor(level); /// setting starting level color
+
+        char frame[2048];
+        int fLen = 0;
+
+        fLen += sprintf(&frame[fLen], "\x1b[H");
+
         /// Drawing board:
         for (int row = 0; row < 20; ++row) {
             for (int col = 0; col < 10; ++col) {
                 if (displayBoard[row][col] == 1) {
-                    printf("# ");
+                    fLen += sprintf(&frame[fLen], "# ");
                 } else {
-                    printf(". ");
+                    fLen += sprintf(&frame[fLen], ". ");
                 }
             }
-            printf("\n");
+            fLen += sprintf(&frame[fLen], "\n");
         }
-        setColor(7);
+        //setColor(7);
 
-        printf("-------------------\n"); /// separator!
-
-        printf("Lines Cleared: %d\n",linesClear); /// line clear counter display
-
-        printf("Score: %d\n", *score); /// printing score
-
-        printf("Level: %d\n", level); /// printing current level
-
-        /// drawing next shape
-        printf("\nNext piece:\n");
+        fLen += sprintf(&frame[fLen], "-------------------\n");
+        fLen += sprintf(&frame[fLen], "Lines Cleared: %d\n", linesClear);
+        fLen += sprintf(&frame[fLen], "Score: %d\n", *score);
+        fLen += sprintf(&frame[fLen], "Level: %d\n\n", level);
+        fLen += sprintf(&frame[fLen], "Next piece:\n");
 
         for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 4; col++) {
-                printf("%c ", tetrominos[nextShape][row][col] ? '#' : ' ');
+                if (tetrominos[nextShape][row][col]) {
+                    fLen += sprintf(&frame[fLen], "# ");
+                } else {
+                    fLen += sprintf(&frame[fLen], "  ");
+                }
             }
-            printf("\n");
+            fLen += sprintf(&frame[fLen], "\n");
         }
+
+        setColor(level);
+        printf("%s",frame);
+        setColor(7);
 
         /// Get Input
         if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
