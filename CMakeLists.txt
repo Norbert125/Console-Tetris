@@ -6,6 +6,8 @@ set(CMAKE_C_STANDARD 99)
 # 1. Tell CLion to look in the current folder for header files like curses.h
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+target_link_directories(${PROJECT_NAME} winmm)
+
 # 2. List all of your .c files here so CLion knows to compile them
 add_executable(my_tetris
         game/game.c

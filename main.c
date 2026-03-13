@@ -1,6 +1,8 @@
 #include "game/curses.h"
 #include "game/game.h"
-// #include "saveScore/saveScore.h" // Uncomment when ready
+#include <mmsystem.h>
+#include "saveScore/saveScore.h"
+#pragma comment( lib, "winmm.lib" )
 
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
@@ -30,6 +32,25 @@ void drawMenu(int selected, int bagSystem) {
     refresh();
 }
 
+/*void startMusic(const char* filename) {
+    char command[256];
+    MCIERROR res;
+
+    sprintf(command, "open \"%s\" type waveaudio alias bgm", filename);
+    res = mciSendString(command, NULL, 0, NULL);
+    if (res != 0) {
+        // You could handle the error here if you wanted
+    }
+
+    res = mciSendString("play bgm repeat", NULL, 0, NULL);
+}
+
+void stopMusic() {
+    mciSendString("stop bgm", NULL, 0, NULL);
+    mciSendString("close bgm", NULL, 0, NULL);
+}*/
+
+
 int main() {
     /// --- PDCurses Initialization ---
     initscr();
@@ -53,6 +74,7 @@ int main() {
     /// Wait for input in the menu (blocking)
     nodelay(stdscr, FALSE);
 
+    //startMusic("tetris_theme");
     while (running) {
         drawMenu(selected, bagSystem);
         int ch = getch();
@@ -73,7 +95,7 @@ int main() {
                 gameLoop(board, &score, bagSystem);
                 nodelay(stdscr, FALSE); /// Switch back to blocking for the menu
 
-                // saveScore(score); // Uncomment when ready
+                saveScore(score);
 
             } else if (selected == 1) {
                 /// TOGGLE BAG SYSTEM
@@ -86,7 +108,8 @@ int main() {
         }
     }
 
-    /// --- PDCurses Cleanup ---
+    //stopMusic();
     endwin();
+    clear();
     return 0;
 }
