@@ -4,37 +4,19 @@
 #include <stdlib.h>
 #include <time.h>
 #include <windows.h>
+#include "game/curses.h"
 
-void setColor(int level) {
-    int color;
+int getColorPair(int level) {
     switch (level) {
-        case 1:
-            color = 9;  /// Blue
-            break;
-        case 2:
-            color = 10; /// Green
-            break;
-        case 3:
-            color = 12; /// Red
-            break;
-        case 4:
-            color = 14; /// Yellow
-            break;
-        case 5:
-            color = 11; /// Cyan
-            break;
-        case 6:
-            color = 13; /// Magenta
-            break;
-        default:
-            color = 15; /// White
-            break;
+        case 1: return 1; /// Blue
+        case 2: return 2; /// Green
+        case 3: return 3; /// Red
+        case 4: return 4; /// Yellow
+        case 5: return 5; /// Cyan
+        case 6: return 6; /// Magenta
+        default: return 7; /// White
     }
-
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, color);
 }
-
 
 void shuffleBag(int *bag, int *bagIndex) {
     for (int i = 0; i < NUM_SHAPES; ++i) {
@@ -60,34 +42,40 @@ int getNextPiece(int *bag, int *bagIndex, int useBagSystem) {
     }
 }
 
-
 void gameLoop(int board[20][10], int *score) {
-    srand(time(nullptr));
-    int useBagSys = 0; /// bag system usage
+    srand(time(0));
+    int useBagSys = 0;
     int bagIndex;
     int bag[NUM_SHAPES];
-    printf("Enable bag system? \n(by enabling it bag system provides the fact that don't get duplicates, allways separate pieces) (y/n): ");
-    char input = getchar();
-    if (input == 'y' || input == 'Y') {useBagSys = 1;}
-    if (useBagSys){ shuffleBag(bag,&bagIndex);}
+
+    /// FIX: Use Curses for the prompt so it doesn't break the terminal buffer
+    nodelay(stdscr, FALSE); /// Temporarily pause the game loop to wait for user input
+    mvprintw(0, 0, "Enable bag system?");
+    mvprintw(1, 0, "(by enabling it bag system provides the fact that don't get duplicates, allways separate pieces) (y/n): ");
+    refresh();
+
+    int input = getch();
+    if (input == 'y' || input == 'Y') { useBagSys = 1; }
+    if (useBagSys){ shuffleBag(bag, &bagIndex); }
+
+    nodelay(stdscr, TRUE); /// Turn non-blocking input back on for the game
+    clear(); /// Wipe the prompt off the screen
+
     int gameOver = 0;
     int linesClear = 0;
     int level = 1;
-    int currentShape[4][4] = {0}; /// current shape
-    int rotatedShape[4][4] = {0}; /// rotated shape
+    int currentShape[4][4] = {0};
+    int rotatedShape[4][4] = {0};
     int x = 3, y = 0;
     int nextShape = rand() % NUM_SHAPES;
     int currentPiece = nextShape;
     memcpy(currentShape, tetrominos[nextShape], sizeof(tetrominos[0]));
-    nextShape = getNextPiece(bag,&bagIndex,useBagSys);
+    nextShape = getNextPiece(bag, &bagIndex, useBagSys);
+
     while (!gameOver) {
-        srand(time(nullptr));
+        /// FIX: Wipe the virtual buffer clean (No flickering!)
+        erase();
 
-        printf("\x1b[?25l");
-        /// clear console
-        system("cls");
-
-        printf("\x1b[H");
         int displayBoard[20][10];
 
         /// display board - game board
@@ -109,46 +97,44 @@ void gameLoop(int board[20][10], int *score) {
                 }
             }
         }
-        setColor(level); /// setting starting level color
 
-        char frame[2048];
-        int fLen = 0;
+        int colorPair = getColorPair(level);
 
-        fLen += sprintf(&frame[fLen], "\x1b[H");
-
-        /// Drawing board:
+        /// FIX: Drawing board entirely with Curses
         for (int row = 0; row < 20; ++row) {
             for (int col = 0; col < 10; ++col) {
                 if (displayBoard[row][col] == 1) {
-                    fLen += sprintf(&frame[fLen], "# ");
+                    attron(COLOR_PAIR(colorPair));
+                    mvprintw(row, col * 2, "# ");
+                    attroff(COLOR_PAIR(colorPair));
                 } else {
-                    fLen += sprintf(&frame[fLen], ". ");
+                    mvprintw(row, col * 2, ". ");
                 }
             }
-            fLen += sprintf(&frame[fLen], "\n");
         }
-        //setColor(7);
 
-        fLen += sprintf(&frame[fLen], "-------------------\n");
-        fLen += sprintf(&frame[fLen], "Lines Cleared: %d\n", linesClear);
-        fLen += sprintf(&frame[fLen], "Score: %d\n", *score);
-        fLen += sprintf(&frame[fLen], "Level: %d\n\n", level);
-        fLen += sprintf(&frame[fLen], "Next piece:\n");
+        int ui_x = 25;
+        mvprintw(0, ui_x, "-------------------");
+        mvprintw(2, ui_x, "Lines Cleared: %d", linesClear);
+        mvprintw(4, ui_x, "Score: %d", *score);
+        mvprintw(6, ui_x, "Level: %d", level);
+        mvprintw(8, ui_x, "Next piece:");
 
+        /// Render Next Piece with color
+        attron(COLOR_PAIR(colorPair));
         for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 4; col++) {
                 if (tetrominos[nextShape][row][col]) {
-                    fLen += sprintf(&frame[fLen], "# ");
+                    mvprintw(10 + row, ui_x + (col * 2), "# ");
                 } else {
-                    fLen += sprintf(&frame[fLen], "  ");
+                    mvprintw(10 + row, ui_x + (col * 2), "  ");
                 }
             }
-            fLen += sprintf(&frame[fLen], "\n");
         }
+        attroff(COLOR_PAIR(colorPair));
 
-        setColor(level);
-        printf("%s",frame);
-        setColor(7);
+        /// FIX: Push everything to the screen in one smooth motion
+        refresh();
 
         /// Get Input
         if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
@@ -207,7 +193,6 @@ void gameLoop(int board[20][10], int *score) {
                         break;
                     }
                 }
-                if (!kick){;}
             }
             zPressed = 1;
         }
@@ -229,7 +214,6 @@ void gameLoop(int board[20][10], int *score) {
                         break;
                     }
                 }
-                if (!kick){;}
             }
             xPressed = 1;
         }
@@ -264,7 +248,7 @@ void gameLoop(int board[20][10], int *score) {
                     }
                 }
                 if (full) {
-                    linesClearedNow++; /// present line clear counter
+                    linesClearedNow++;
 
                     for (int r = row; r > 0; r--) {
                         for (int col = 0; col < 10; col++) {
@@ -274,55 +258,61 @@ void gameLoop(int board[20][10], int *score) {
                     for (int col = 0; col < 10; col++) {
                         board[0][col] = 0;
                     }
-                    row++;  /// re-check this row
+                    row++;
                 }
             }
 
             switch (linesClearedNow) {
-                case 1: *score += 100 * level; Beep(600,100);break;
-                case 2: *score += 300 * level; Beep(700,100);break;
-                case 3: *score += 500 * level; Beep(800,100);break;
-                case 4: *score += 800 * level; Beep(900,100); printf("\n>>> TETRIS!! <<<\n");Sleep(500);break;
+                case 1: *score += 100 * level; Beep(600,100); break;
+                case 2: *score += 300 * level; Beep(700,100); break;
+                case 3: *score += 500 * level; Beep(800,100); break;
+                case 4:
+                    *score += 800 * level;
+                    Beep(900,100);
+                    /// FIX: Using mvprintw instead of printf
+                    mvprintw(21, 0, ">>> TETRIS!! <<<");
+                    refresh();
+                    Sleep(500);
+                    break;
                 default:break;
             }
 
             linesClear += linesClearedNow;
 
-            if (linesClear >= (level+1) *10) {
+            if (linesClear >= (level+1) * 10) {
                 level++;
                 Beep(1000,150);
                 Beep(1200,150);
             }
 
-            /// Spawn next piece AFTER checking for lines
             x = 3;
             y = 0;
             memcpy(currentShape, tetrominos[nextShape], sizeof(currentShape));
             currentPiece = nextShape;
             nextShape = getNextPiece(bag,&bagIndex,useBagSys);
 
-            /// Game over check
             if (!canMoveDown(board, x, y, currentShape)) { gameOver = 1; }
         }
 
-        /// Game over
         if (y >= 20) {
             Beep(400, 300);
             Beep(300, 300);
             Beep(200, 400);
             gameOver = 1;
         }
-        /// Falling speed
+
         int speed = 250 - level * 50;
         if (level > 10) {speed = 10;}
         else if (speed < 100) speed = 100;
         Sleep(speed);
     }
-    system("cls");
-    printf("\x1b[?25h");
-    printf("Game OVER!!\n");
-    printf("Final score: %i\n", *score);
-    printf("Final level reached: %i\n", level);
-    Sleep(500);
+
+    /// FIX: Use Curses for the game over screen
+    clear();
+    mvprintw(0, 0, "Game OVER!!");
+    mvprintw(1, 0, "Final score: %i", *score);
+    mvprintw(2, 0, "Final level reached: %i", level);
+    refresh();
+    Sleep(2000);
     FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 }
