@@ -7,7 +7,7 @@ void shuffleBag(int *bag, int *bagIndex);
 
 int getNextPiece(int *bag, int *bagIndex, int useBagSystem);
 
-void gameLoop(int board[20][10], int *score);
+void gameLoop(int board[20][10], int *score, int useBagSystem);
 
 void setColor(int level);
 

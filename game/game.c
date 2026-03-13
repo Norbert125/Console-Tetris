@@ -3,13 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
-/// FIX: Prevent the collision between windows.h and curses.h
 #include <windows.h>
 #undef MOUSE_MOVED
 #include "game/curses.h"
 
-// Helper to map your levels to PDCurses color pairs
 int getColorPair(int level) {
     switch (level) {
         case 1: return 1; /// Blue
@@ -46,24 +43,13 @@ int getNextPiece(int *bag, int *bagIndex, int useBagSystem) {
     }
 }
 
-void gameLoop(int board[20][10], int *score) {
+/// Accept useBagSys directly from main menu
+void gameLoop(int board[20][10], int *score, int useBagSys) {
     srand(time(0));
-    int useBagSys = 0;
     int bagIndex;
     int bag[NUM_SHAPES];
 
-    /// Use Curses for the prompt so it doesn't break the terminal buffer
-    nodelay(stdscr, FALSE);
-    mvprintw(0, 0, "Enable bag system?");
-    mvprintw(1, 0, "(by enabling it bag system provides the fact that don't get duplicates, allways separate pieces) (y/n): ");
-    refresh();
-
-    int input = getch();
-    if (input == 'y' || input == 'Y') { useBagSys = 1; }
     if (useBagSys){ shuffleBag(bag, &bagIndex); }
-
-    nodelay(stdscr, TRUE);
-    clear();
 
     int gameOver = 0;
     int linesClear = 0;
@@ -101,45 +87,70 @@ void gameLoop(int board[20][10], int *score) {
 
         int colorPair = getColorPair(level);
 
-        /// --- 1. DRAW THE RETRO BORDER ---
+        /// --- 1. DRAW PERFECT ACS PLAYFIELD BORDERS ---
         attron(COLOR_PAIR(7));
-        mvprintw(0, 1, "--------------------");
-        for (int row = 0; row < 20; ++row) {
-            mvprintw(row + 1, 0, "|");
-            mvprintw(row + 1, 21, "|");
+
+        /// Top and bottom lines
+        mvaddch(0, 0, ACS_ULCORNER);
+        mvaddch(21, 0, ACS_LLCORNER);
+        for(int i = 1; i <= 20; i++) {
+            mvaddch(0, i, ACS_HLINE);
+            mvaddch(21, i, ACS_HLINE);
         }
-        mvprintw(21, 1, "--------------------");
+        mvaddch(0, 21, ACS_URCORNER);
+        mvaddch(21, 21, ACS_LRCORNER);
+
+        /// Side walls
+        for(int row = 0; row < 20; ++row) {
+            mvaddch(row + 1, 0, ACS_VLINE);
+            mvaddch(row + 1, 21, ACS_VLINE);
+        }
         attroff(COLOR_PAIR(7));
 
-        /// --- 2. DRAW THE PLAYFIELD ---
+        /// --- 2. DRAW THE PLAYFIELD BLOCKS ---
         for (int row = 0; row < 20; ++row) {
             for (int col = 0; col < 10; ++col) {
                 if (displayBoard[row][col] == 1) {
                     attron(COLOR_PAIR(colorPair));
                     mvprintw(row + 1, (col * 2) + 1, "[]");
                     attroff(COLOR_PAIR(colorPair));
-                } else {
-                    mvprintw(row + 1, (col * 2) + 1, "  ");
                 }
             }
         }
 
-        /// --- 3. DRAW THE ARCADE UI ---
-        int ui_x = 26;
+        /// --- 3. DRAW ACS UI BOX ---
         attron(COLOR_PAIR(7));
-        mvprintw(1, ui_x, "SCORE: %06d", *score);
-        mvprintw(3, ui_x, "LEVEL: %02d", level);
-        mvprintw(5, ui_x, "LINES: %03d", linesClear);
-        mvprintw(8, ui_x, "NEXT:");
+        int box_start = 24;
+        int box_end = 41;
+
+        mvaddch(0, box_start, ACS_ULCORNER);
+        mvaddch(15, box_start, ACS_LLCORNER);
+        for(int i = box_start + 1; i < box_end; i++) {
+            mvaddch(0, i, ACS_HLINE);
+            mvaddch(15, i, ACS_HLINE);
+        }
+        mvaddch(0, box_end, ACS_URCORNER);
+        mvaddch(15, box_end, ACS_LRCORNER);
+
+        for(int row = 1; row < 15; ++row) {
+            mvaddch(row, box_start, ACS_VLINE);
+            mvaddch(row, box_end, ACS_VLINE);
+        }
+
+        /// Populate UI Box
+        int ui_x = box_start + 2;
+        mvprintw(2, ui_x, "SCORE: %06d", *score);
+        mvprintw(4, ui_x, "LEVEL: %02d", level);
+        mvprintw(6, ui_x, "LINES: %03d", linesClear);
+        mvprintw(9, ui_x, "NEXT:");
         attroff(COLOR_PAIR(7));
 
+        /// Render Next Piece
         attron(COLOR_PAIR(colorPair));
         for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 4; col++) {
                 if (tetrominos[nextShape][row][col]) {
-                    mvprintw(10 + row, ui_x + (col * 2), "[]");
-                } else {
-                    mvprintw(10 + row, ui_x + (col * 2), "  ");
+                    mvprintw(11 + row, ui_x + (col * 2), "[]");
                 }
             }
         }
@@ -147,7 +158,7 @@ void gameLoop(int board[20][10], int *score) {
 
         refresh();
 
-        /// Get Input (Still using Windows API for now)
+        /// Input Handling
         if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
             int canMove = 1;
             for (int row = 0; row < 4; ++row) {
@@ -155,9 +166,7 @@ void gameLoop(int board[20][10], int *score) {
                     if (currentShape[row][col]) {
                         int newX = x + col - 1;
                         int newY = y + row;
-                        if (newX < 0 || board[newY][newX]) {
-                            canMove = 0;
-                        }
+                        if (newX < 0 || board[newY][newX]) { canMove = 0; }
                     }
                 }
             }
@@ -170,9 +179,7 @@ void gameLoop(int board[20][10], int *score) {
                     if (currentShape[row][col]) {
                         int newX = x + col + 1;
                         int newY = y + row;
-                        if (newX >= 10 || board[newY][newX]) {
-                            canMove = 0;
-                        }
+                        if (newX >= 10 || board[newY][newX]) { canMove = 0; }
                     }
                 }
             }
@@ -185,6 +192,7 @@ void gameLoop(int board[20][10], int *score) {
                 *score += 5;
             }
         }
+
         static int zPressed = 0;
         static int xPressed = 0;
 
@@ -198,16 +206,13 @@ void gameLoop(int board[20][10], int *score) {
                     if (canRotate(board,x+dx,y,rotatedShape)) {
                         x += dx;
                         memcpy(currentShape,rotatedShape,sizeof(rotatedShape));
-                        kick = 1;
-                        break;
+                        kick = 1; break;
                     }
                 }
             }
             zPressed = 1;
         }
-        if (!(GetAsyncKeyState('Z') & 0x8000)) {
-            zPressed = 0;
-        }
+        if (!(GetAsyncKeyState('Z') & 0x8000)) zPressed = 0;
 
         if ((GetAsyncKeyState('X') & 0x8000) && !xPressed) {
             rotateClockwise(currentShape, rotatedShape);
@@ -219,17 +224,15 @@ void gameLoop(int board[20][10], int *score) {
                     if (canRotate(board,x+dx,y,rotatedShape)) {
                         x += dx;
                         memcpy(currentShape,rotatedShape,sizeof(rotatedShape));
-                        kick = 1;
-                        break;
+                        kick = 1; break;
                     }
                 }
             }
             xPressed = 1;
         }
-        if (!(GetKeyState('X') & 0x8000)) {
-            xPressed = 0;
-        }
+        if (!(GetKeyState('X') & 0x8000)) xPressed = 0;
 
+        /// Piece Locking and Line Clears
         if (canMoveDown(board, x, y, currentShape)) {
             y++;
         } else {
@@ -251,13 +254,11 @@ void gameLoop(int board[20][10], int *score) {
                 int full = 1;
                 for (int col = 0; col < 10; col++) {
                     if (board[row][col] == 0) {
-                        full = 0;
-                        break;
+                        full = 0; break;
                     }
                 }
                 if (full) {
                     linesClearedNow++;
-
                     for (int r = row; r > 0; r--) {
                         for (int col = 0; col < 10; col++) {
                             board[r][col] = board[r - 1][col];
@@ -277,9 +278,16 @@ void gameLoop(int board[20][10], int *score) {
                 case 4:
                     *score += 800 * level;
                     Beep(900,100);
-                    mvprintw(23, 0, ">>> TETRIS!! <<<");
+                    attron(COLOR_PAIR(5) | A_BOLD); /// Make it Cyan and Bold
+                    mvprintw(22, 0, "  _______ ______ _______ _____  _____  _____ ");
+                    mvprintw(23, 0, " |__   __|  ____|__   __|  __ \\|_   _|/ ____|");
+                    mvprintw(24, 0, "    | |  | |__     | |  | |__) | | | | (___  ");
+                    mvprintw(25, 0, "    | |  |  __|    | |  |  _  /  | |  \\___ \\ ");
+                    mvprintw(26, 0, "    | |  | |____   | |  | | \\ \\ _| |_ ____) |");
+                    mvprintw(27, 0, "    |_|  |______|  |_|  |_|  \\_\\_____|_____/ ");
+                    attroff(COLOR_PAIR(5) | A_BOLD);
                     refresh();
-                    Sleep(500);
+                    Sleep(800);
                     break;
                 default:break;
             }
@@ -292,8 +300,7 @@ void gameLoop(int board[20][10], int *score) {
                 Beep(1200,150);
             }
 
-            x = 3;
-            y = 0;
+            x = 3; y = 0;
             memcpy(currentShape, tetrominos[nextShape], sizeof(currentShape));
             currentPiece = nextShape;
             nextShape = getNextPiece(bag,&bagIndex,useBagSys);
@@ -302,9 +309,7 @@ void gameLoop(int board[20][10], int *score) {
         }
 
         if (y >= 20) {
-            Beep(400, 300);
-            Beep(300, 300);
-            Beep(200, 400);
+            Beep(400, 300); Beep(300, 300); Beep(200, 400);
             gameOver = 1;
         }
 
@@ -314,11 +319,15 @@ void gameLoop(int board[20][10], int *score) {
         Sleep(speed);
     }
 
+    /// Game Over Screen (pauses before going back to the menu)
     clear();
-    mvprintw(0, 0, "Game OVER!!");
-    mvprintw(1, 0, "Final score: %i", *score);
-    mvprintw(2, 0, "Final level reached: %i", level);
+    nodelay(stdscr, FALSE); /// Block so the user can read the score
+    mvprintw(10, 15, "GAME OVER!!");
+    mvprintw(12, 15, "Final Score: %06d", *score);
+    mvprintw(13, 15, "Final Level: %02d", level);
+    mvprintw(16, 15, "Press any key to return to menu...");
     refresh();
-    Sleep(2000);
+
+    getch(); /// Wait for a single keystroke
     FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 }
