@@ -1,88 +1,59 @@
 #include "saveScore.h"
 #include <stdio.h>
+#include "curses.h" // Use Curses instead of Windows.h/Stdio
 #include <windows.h>
 
 #define FILENAME "highscores.txt"
 
 void saveScore(int score) {
-    char option;
     int highScore = 0;
-    int ch;
 
-    /// 1. Safely read the high score using exact string matching
+    // 1. Read High Score
     FILE *file = fopen(FILENAME, "r");
     if (file != NULL) {
         fscanf(file, "HIGH SCORE: %d", &highScore);
         fclose(file);
-        Sleep(500);
-    } else {
-        printf("No high scores file found, creating a new one.\n");
-        Sleep(500);
     }
 
-    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-    Sleep(100);
+    // 2. Draw the Save Prompt in the TUI
+    clear();
+    attron(COLOR_PAIR(7));
+    mvprintw(10, 10, "CURRENT SCORE: %d", score);
+    mvprintw(11, 10, "HIGH SCORE   : %d", highScore);
+    mvprintw(14, 10, "Do you want to save your score? (Y/N)");
+    refresh();
 
-    while (1) {
-        printf("Do you want to save your score? (Y/N): ");
-        FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-        scanf(" %c", &option);
+    int choice = getch();
+    if (choice == 'y' || choice == 'Y') {
+        if (score > highScore) {
+            attron(COLOR_PAIR(2) | A_BOLD);
+            mvprintw(16, 10, "NEW HIGH SCORE! CONGRATS!");
+            attroff(COLOR_PAIR(2) | A_BOLD);
+            highScore = score;
+        }
 
-        while ((ch = getchar()) != '\n' && ch != EOF); /// Flush input buffer
-        Sleep(50);
-
-        if (option == 'y' || option == 'Y') {
-            if (score > highScore) {
-                printf("Congratulations!!! NEW HIGH SCORE!!\n");
-                Sleep(500);
-                highScore = score;
-            }
-
-            FILE *tempFile = fopen("temp.txt", "w");
-            if (tempFile == NULL) {
-                perror("Failed to open temp file for saving.\n");
-                return;
-            }
-
-            /// Write the new (or existing) high score to the top
+        // Save logic
+        FILE *tempFile = fopen("temp.txt", "w");
+        if (tempFile) {
             fprintf(tempFile, "HIGH SCORE: %d\n", highScore);
-
-            /// 2. Safely copy old scores, skipping the old high score line
             file = fopen(FILENAME, "r");
-            if (file != NULL) {
+            if (file) {
                 char line[100];
-                fgets(line, sizeof(line), file); /// Skip the first line
-                while (fgets(line, sizeof(line), file)) {
-                    fputs(line, tempFile);
-                }
+                fgets(line, sizeof(line), file); // skip old high score
+                while (fgets(line, sizeof(line), file)) fputs(line, tempFile);
                 fclose(file);
             }
-
-            /// Append current score to the end
             fprintf(tempFile, "%d\n", score);
             fclose(tempFile);
-
-            /// 3. Safely replace the old file
-            if (remove(FILENAME) != 0 && GetLastError() != ERROR_FILE_NOT_FOUND) {
-                perror("Failed to remove original file");
-                Sleep(3000);
-                return;
-            }
-
-            if (rename("temp.txt", FILENAME) != 0) {
-                perror("Failed to rename temp file");
-                Sleep(3000);
-                return;
-            }
-
-            printf("Score saved successfully.\n");
-            Sleep(500);
-            return;
-
-        } else if (option == 'n' || option == 'N') {
-            printf("Score not saved.\n");
-            Sleep(500);
-            return;
+            remove(FILENAME);
+            rename("temp.txt", FILENAME);
         }
+
+        mvprintw(18, 10, "Score saved! Press any key...");
+    } else {
+        mvprintw(18, 10, "Score discarded. Press any key...");
     }
+
+    refresh();
+    while(getch() == ERR); // Wait for confirmation before returning to menu
 }

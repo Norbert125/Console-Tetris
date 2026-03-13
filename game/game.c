@@ -5,7 +5,7 @@
 #include <time.h>
 #include <windows.h>
 #undef MOUSE_MOVED
-#include "game/curses.h"
+#include "curses.h"
 
 int getColorPair(int level) {
     switch (level) {
@@ -320,14 +320,21 @@ void gameLoop(int board[20][10], int *score, int useBagSys) {
     }
 
     /// Game Over Screen (pauses before going back to the menu)
+    nodelay(stdscr, FALSE); // Stop the game from rushing past
+    flushinp();             // PDCurses command to wipe all pending keypresses
+
     clear();
-    nodelay(stdscr, FALSE); /// Block so the user can read the score
-    mvprintw(10, 15, "GAME OVER!!");
+    attron(COLOR_PAIR(3) | A_BOLD); // Red and Bold for Game Over
+    mvprintw(10, 15, "  GG - GAME OVER!");
+    attroff(COLOR_PAIR(3) | A_BOLD);
+
+    attron(COLOR_PAIR(7));
     mvprintw(12, 15, "Final Score: %06d", *score);
     mvprintw(13, 15, "Final Level: %02d", level);
-    mvprintw(16, 15, "Press any key to return to menu...");
-    refresh();
+    mvprintw(16, 10, "Press ANY KEY to return to main menu...");
+    attroff(COLOR_PAIR(7));
 
-    getch(); /// Wait for a single keystroke
+    refresh(); // Push the final screen to the terminal
+    while(getch() == ERR) {;} /// Wait for a single keystroke
     FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 }

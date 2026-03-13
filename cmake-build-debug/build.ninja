@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# Project: my_tetris
+# Project: Console_Tetris
 # Configurations: Debug
 # =============================================================================
 
@@ -49,37 +49,37 @@ cmake_ninja_workdir = E$:/Console-Tetris/cmake-build-debug/
 
 build cmake_object_order_depends_target_my_tetris: phony || .
 
+build CMakeFiles/my_tetris.dir/main.c.obj: C_COMPILER__my_tetris_unscanned_Debug E$:/Console-Tetris/main.c || cmake_object_order_depends_target_my_tetris
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\my_tetris.dir\main.c.obj.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  INCLUDES = -IE:/Console-Tetris/game -IE:/Console-Tetris
+  OBJECT_DIR = CMakeFiles\my_tetris.dir
+  OBJECT_FILE_DIR = CMakeFiles\my_tetris.dir
+
 build CMakeFiles/my_tetris.dir/game/game.c.obj: C_COMPILER__my_tetris_unscanned_Debug E$:/Console-Tetris/game/game.c || cmake_object_order_depends_target_my_tetris
   CONFIG = Debug
   DEP_FILE = CMakeFiles\my_tetris.dir\game\game.c.obj.d
-  FLAGS = -g -std=gnu99 -fdiagnostics-color=always
-  INCLUDES = -IE:/Console-Tetris
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  INCLUDES = -IE:/Console-Tetris/game -IE:/Console-Tetris
+  OBJECT_DIR = CMakeFiles\my_tetris.dir
+  OBJECT_FILE_DIR = CMakeFiles\my_tetris.dir\game
+
+build CMakeFiles/my_tetris.dir/game/tetromino.c.obj: C_COMPILER__my_tetris_unscanned_Debug E$:/Console-Tetris/game/tetromino.c || cmake_object_order_depends_target_my_tetris
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\my_tetris.dir\game\tetromino.c.obj.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  INCLUDES = -IE:/Console-Tetris/game -IE:/Console-Tetris
   OBJECT_DIR = CMakeFiles\my_tetris.dir
   OBJECT_FILE_DIR = CMakeFiles\my_tetris.dir\game
 
 build CMakeFiles/my_tetris.dir/saveScore/saveScore.c.obj: C_COMPILER__my_tetris_unscanned_Debug E$:/Console-Tetris/saveScore/saveScore.c || cmake_object_order_depends_target_my_tetris
   CONFIG = Debug
   DEP_FILE = CMakeFiles\my_tetris.dir\saveScore\saveScore.c.obj.d
-  FLAGS = -g -std=gnu99 -fdiagnostics-color=always
-  INCLUDES = -IE:/Console-Tetris
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  INCLUDES = -IE:/Console-Tetris/game -IE:/Console-Tetris
   OBJECT_DIR = CMakeFiles\my_tetris.dir
   OBJECT_FILE_DIR = CMakeFiles\my_tetris.dir\saveScore
-
-build CMakeFiles/my_tetris.dir/game/tetromino.c.obj: C_COMPILER__my_tetris_unscanned_Debug E$:/Console-Tetris/game/tetromino.c || cmake_object_order_depends_target_my_tetris
-  CONFIG = Debug
-  DEP_FILE = CMakeFiles\my_tetris.dir\game\tetromino.c.obj.d
-  FLAGS = -g -std=gnu99 -fdiagnostics-color=always
-  INCLUDES = -IE:/Console-Tetris
-  OBJECT_DIR = CMakeFiles\my_tetris.dir
-  OBJECT_FILE_DIR = CMakeFiles\my_tetris.dir\game
-
-build CMakeFiles/my_tetris.dir/main.c.obj: C_COMPILER__my_tetris_unscanned_Debug E$:/Console-Tetris/main.c || cmake_object_order_depends_target_my_tetris
-  CONFIG = Debug
-  DEP_FILE = CMakeFiles\my_tetris.dir\main.c.obj.d
-  FLAGS = -g -std=gnu99 -fdiagnostics-color=always
-  INCLUDES = -IE:/Console-Tetris
-  OBJECT_DIR = CMakeFiles\my_tetris.dir
-  OBJECT_FILE_DIR = CMakeFiles\my_tetris.dir
 
 
 # =============================================================================
@@ -89,7 +89,7 @@ build CMakeFiles/my_tetris.dir/main.c.obj: C_COMPILER__my_tetris_unscanned_Debug
 #############################################
 # Link the executable my_tetris.exe
 
-build my_tetris.exe: C_EXECUTABLE_LINKER__my_tetris_Debug CMakeFiles/my_tetris.dir/game/game.c.obj CMakeFiles/my_tetris.dir/saveScore/saveScore.c.obj CMakeFiles/my_tetris.dir/game/tetromino.c.obj CMakeFiles/my_tetris.dir/main.c.obj | E$:/Console-Tetris/pdcurses.a
+build my_tetris.exe: C_EXECUTABLE_LINKER__my_tetris_Debug CMakeFiles/my_tetris.dir/main.c.obj CMakeFiles/my_tetris.dir/game/game.c.obj CMakeFiles/my_tetris.dir/game/tetromino.c.obj CMakeFiles/my_tetris.dir/saveScore/saveScore.c.obj | E$:/Console-Tetris/pdcurses.a
   CONFIG = Debug
   FLAGS = -g
   LINK_LIBRARIES = E:/Console-Tetris/pdcurses.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

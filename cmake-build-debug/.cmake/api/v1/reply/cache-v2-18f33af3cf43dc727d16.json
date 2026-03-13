@@ -771,7 +771,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "my_tetris"
+			"value" : "Console_Tetris"
 		},
 		{
 			"name" : "CMAKE_RANLIB",
@@ -1164,6 +1164,42 @@
 			],
 			"type" : "BOOL",
 			"value" : "FALSE"
+		},
+		{
+			"name" : "Console_Tetris_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "E:/Console-Tetris/cmake-build-debug"
+		},
+		{
+			"name" : "Console_Tetris_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
+		},
+		{
+			"name" : "Console_Tetris_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "E:/Console-Tetris"
 		},
 		{
 			"name" : "my_tetris_BINARY_DIR",

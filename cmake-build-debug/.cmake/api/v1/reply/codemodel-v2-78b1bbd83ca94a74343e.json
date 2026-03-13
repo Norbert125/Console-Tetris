@@ -9,7 +9,7 @@
 					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
 					"minimumCMakeVersion" : 
 					{
-						"string" : "3.10"
+						"string" : "3.26"
 					},
 					"projectIndex" : 0,
 					"source" : ".",
@@ -27,7 +27,7 @@
 					[
 						0
 					],
-					"name" : "my_tetris",
+					"name" : "Console_Tetris",
 					"targetIndexes" : 
 					[
 						0
@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "my_tetris::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-my_tetris-Debug-4a60d6c206c61adb60a1.json",
+					"jsonFile" : "target-my_tetris-Debug-67f16d24c9012372c48d.json",
 					"name" : "my_tetris",
 					"projectIndex" : 0
 				}

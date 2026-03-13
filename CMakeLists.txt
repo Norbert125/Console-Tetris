@@ -1,25 +1,27 @@
-cmake_minimum_required(VERSION 3.10)
-project(my_tetris C)
+cmake_minimum_required(VERSION 3.26)
+project(Console_Tetris C)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 11)
 
-# 1. Tell CLion to look in the current folder for header files like curses.h
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-target_link_directories(${PROJECT_NAME} winmm)
-
-# 2. List all of your .c files here so CLion knows to compile them
-add_executable(my_tetris
+# 1. Source files (Only .c and .h files)
+set(SOURCE_FILES
+        main.c
         game/game.c
         game/game.h
-        saveScore/saveScore.c
-        saveScore/saveScore.h
         game/tetromino.c
         game/tetromino.h
-        game/curses.h
-        main.c
+        saveScore/saveScore.c
+        saveScore/saveScore.h
 )
 
-# 3. Tell CLion to link the PDCurses engine to your game!
-# (Make sure pdcurses.a is in your main project folder)
-target_link_libraries(my_tetris ${CMAKE_CURRENT_SOURCE_DIR}/pdcurses.a)
+# 2. Create the executable
+add_executable(my_tetris ${SOURCE_FILES})
+
+# 3. Include Directories (Where the compiler looks for headers)
+target_include_directories(my_tetris PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/game)
+target_include_directories(my_tetris PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 4. Linking (The critical fix)
+# We use target_link_libraries and point directly to the .a file.
+# This assumes pdcurses.a is in your main project folder.
+target_link_libraries(my_tetris PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/pdcurses.a")

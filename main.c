@@ -1,16 +1,12 @@
 #include "game/curses.h"
 #include "game/game.h"
-#include <mmsystem.h>
 #include "saveScore/saveScore.h"
-#pragma comment( lib, "winmm.lib" )
-
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
 
 void drawMenu(int selected, int bagSystem) {
     erase();
 
-    /// Giant Retro ASCII Art Title
     attron(COLOR_PAIR(3) | A_BOLD);
     mvprintw(2, 5, "  _______ ______ _______ _____  _____  _____ ");
     mvprintw(3, 5, " |__   __|  ____|__   __|  __ \\|_   _|/ ____|");
@@ -31,25 +27,6 @@ void drawMenu(int selected, int bagSystem) {
 
     refresh();
 }
-
-/*void startMusic(const char* filename) {
-    char command[256];
-    MCIERROR res;
-
-    sprintf(command, "open \"%s\" type waveaudio alias bgm", filename);
-    res = mciSendString(command, NULL, 0, NULL);
-    if (res != 0) {
-        // You could handle the error here if you wanted
-    }
-
-    res = mciSendString("play bgm repeat", NULL, 0, NULL);
-}
-
-void stopMusic() {
-    mciSendString("stop bgm", NULL, 0, NULL);
-    mciSendString("close bgm", NULL, 0, NULL);
-}*/
-
 
 int main() {
     /// --- PDCurses Initialization ---
@@ -108,8 +85,6 @@ int main() {
         }
     }
 
-    //stopMusic();
     endwin();
-    clear();
     return 0;
 }
