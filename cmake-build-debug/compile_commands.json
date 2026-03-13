@@ -1,0 +1,26 @@
+[
+{
+  "directory": "E:/Console-Tetris/cmake-build-debug",
+  "command": "\"E:\\CLion 2023.2.2\\bin\\mingw\\bin\\gcc.exe\" -g -std=gnu2x -fdiagnostics-color=always -o CMakeFiles\\my_tetris.dir\\main.c.obj -c E:\\Console-Tetris\\main.c",
+  "file": "E:/Console-Tetris/main.c",
+  "output": "E:/Console-Tetris/cmake-build-debug/CMakeFiles/my_tetris.dir/main.c.obj"
+},
+{
+  "directory": "E:/Console-Tetris/cmake-build-debug",
+  "command": "\"E:\\CLion 2023.2.2\\bin\\mingw\\bin\\gcc.exe\" -g -std=gnu2x -fdiagnostics-color=always -o CMakeFiles\\my_tetris.dir\\game\\game.c.obj -c E:\\Console-Tetris\\game\\game.c",
+  "file": "E:/Console-Tetris/game/game.c",
+  "output": "E:/Console-Tetris/cmake-build-debug/CMakeFiles/my_tetris.dir/game/game.c.obj"
+},
+{
+  "directory": "E:/Console-Tetris/cmake-build-debug",
+  "command": "\"E:\\CLion 2023.2.2\\bin\\mingw\\bin\\gcc.exe\" -g -std=gnu2x -fdiagnostics-color=always -o CMakeFiles\\my_tetris.dir\\saveScore\\saveScore.c.obj -c E:\\Console-Tetris\\saveScore\\saveScore.c",
+  "file": "E:/Console-Tetris/saveScore/saveScore.c",
+  "output": "E:/Console-Tetris/cmake-build-debug/CMakeFiles/my_tetris.dir/saveScore/saveScore.c.obj"
+},
+{
+  "directory": "E:/Console-Tetris/cmake-build-debug",
+  "command": "\"E:\\CLion 2023.2.2\\bin\\mingw\\bin\\gcc.exe\" -g -std=gnu2x -fdiagnostics-color=always -o CMakeFiles\\my_tetris.dir\\game\\tetromino.c.obj -c E:\\Console-Tetris\\game\\tetromino.c",
+  "file": "E:/Console-Tetris/game/tetromino.c",
+  "output": "E:/Console-Tetris/cmake-build-debug/CMakeFiles/my_tetris.dir/game/tetromino.c.obj"
+}
+]

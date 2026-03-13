@@ -6,13 +6,6 @@
 
 
 /// definition of tetris shapes:
-int T_shape[4][4];
-int I_shape[4][4];
-int J_shape[4][4];
-int L_shape[4][4];
-int O_shape[4][4];
-int S_shape[4][4];
-int Z_shape[4][4];
 int tetrominos[NUM_SHAPES][4][4] = {
         {
                 {0, 1, 0, 0},

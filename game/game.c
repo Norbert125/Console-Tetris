@@ -81,9 +81,13 @@ void gameLoop(int board[20][10], int *score) {
     memcpy(currentShape, tetrominos[nextShape], sizeof(tetrominos[0]));
     nextShape = getNextPiece(bag,&bagIndex,useBagSys);
     while (!gameOver) {
+        srand(time(nullptr));
+
+        printf("\x1b[?25l");
         /// clear console
         system("cls");
 
+        printf("\x1b[H");
         int displayBoard[20][10];
 
         /// display board - game board
@@ -306,6 +310,7 @@ void gameLoop(int board[20][10], int *score) {
         Sleep(speed);
     }
     system("cls");
+    printf("\x1b[?25h");
     printf("Game OVER!!\n");
     printf("Final score: %i\n", *score);
     printf("Final level reached: %i\n", level);
