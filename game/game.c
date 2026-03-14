@@ -159,7 +159,7 @@ void gameLoop(int board[20][10], int *score, int useBagSys) {
         refresh();
 
         /// Input Handling
-        if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
+        if ((GetAsyncKeyState(VK_LEFT) & 0x8000) || (GetAsyncKeyState('A') & 0x8000) ) {
             int canMove = 1;
             for (int row = 0; row < 4; ++row) {
                 for (int col = 0; col < 4; ++col) {
@@ -172,7 +172,7 @@ void gameLoop(int board[20][10], int *score, int useBagSys) {
             }
             if (canMove) x--;
         }
-        if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
+        if ((GetAsyncKeyState(VK_RIGHT) & 0x8000) || (GetAsyncKeyState('D') & 0x8000)) {
             int canMove = 1;
             for (int row = 0; row < 4; ++row) {
                 for (int col = 0; col < 4; ++col) {
@@ -186,7 +186,7 @@ void gameLoop(int board[20][10], int *score, int useBagSys) {
             if (canMove) x++;
         }
 
-        if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
+        if ((GetAsyncKeyState(VK_DOWN) & 0x8000) || (GetAsyncKeyState('S') & 0x8000)) {
             if (canMoveDown(board, x, y, currentShape)) {
                 y++;
                 *score += 5;
@@ -214,7 +214,7 @@ void gameLoop(int board[20][10], int *score, int useBagSys) {
         }
         if (!(GetAsyncKeyState('Z') & 0x8000)) zPressed = 0;
 
-        if ((GetAsyncKeyState('X') & 0x8000) && !xPressed) {
+        if ( ((GetAsyncKeyState('X') & 0x8000)  || (GetAsyncKeyState('W') & 0x8000) || (GetAsyncKeyState(VK_UP) & 0x8000) ) && !xPressed) {
             rotateClockwise(currentShape, rotatedShape);
             if (canRotate(board, x, y, rotatedShape)) {
                 memcpy(currentShape, rotatedShape, sizeof(rotatedShape));
